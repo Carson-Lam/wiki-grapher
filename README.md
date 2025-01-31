@@ -2,7 +2,7 @@
 
 ## Overview
 
-An intuitive Wikipedia Web Scraper and graphical visualizer.
+An intuitive Wikipedia Web Scraper that graphically represents the interconnectivity between Wikipedia's many pages.
 
 ## Features
 
@@ -29,3 +29,15 @@ An intuitive Wikipedia Web Scraper and graphical visualizer.
   5. [lxml](https://lxml.de/)
 
 - Fonts from [DaFont](https://www.dafont.com/vcr-osd-mono.font)
+
+## Development Timeline
+This section outlines the current status of project developemnt
+
+| **Feature/Task**       | **Status**
+|------------------------|------------|
+| Single-page scraping | **Pending** 🕑|
+| Page handling | **Pending** 🕑|
+| Link retrieval | **Pending** 🕑|
+| User input handling | **Pending** 🕑|
+| Graphical representations | **Pending** 🕑|
+| Graphical Interactivity | **Pending** 🕑|
