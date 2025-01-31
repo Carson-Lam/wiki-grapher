@@ -26,5 +26,6 @@ An intuitive Wikipedia Web Scraper and graphical visualizer.
   2. [BeautifulSoup](https://pypi.org/projectbeautifulsoup4/)
   3. [NetworkX](https://networkx.org/)
   4. [Matplotlib](https://matplotlib.org/)
+  5. [lxml](https://lxml.de/)
 
 - Fonts from [DaFont](https://www.dafont.com/vcr-osd-mono.font)
