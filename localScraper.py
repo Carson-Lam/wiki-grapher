@@ -11,3 +11,4 @@ with open('home.html', 'r') as html_file:
         
         print(f'{section_name} has {section_price}')
 
+ 
