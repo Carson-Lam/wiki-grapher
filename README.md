@@ -35,9 +35,8 @@ This section outlines the current status of project developemnt
 
 | **Feature/Task**       | **Status**
 |------------------------|------------|
-| Single-page scraping | **Pending** 🕑|
-| Page handling | **Pending** 🕑|
-| Link retrieval | **Pending** 🕑|
+| Single-page scraping | Complete ✅|
+| Link retrieval | Partially Complete ⚠|
 | User input handling | **Pending** 🕑|
 | Graphical representations | **Pending** 🕑|
 | Graphical Interactivity | **Pending** 🕑|
