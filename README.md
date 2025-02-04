@@ -37,6 +37,8 @@ This section outlines the current status of project developemnt
 |------------------------|------------|
 | Single-page scraping | Complete ✅|
 | Link retrieval | Partially Complete ⚠|
+| Retrieval Optimization | Partially Complete ⚠|
+| Graphical modeling | **Pending** 🕑|
+| Front End Design | **Pending** 🕑
 | User input handling | **Pending** 🕑|
-| Graphical representations | **Pending** 🕑|
 | Graphical Interactivity | **Pending** 🕑|
