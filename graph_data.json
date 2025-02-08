@@ -1,0 +1,94 @@
+{
+    "nodes": [
+        {
+            "id": "Fergana_(moth)",
+            "size": 65380
+        },
+        {
+            "id": "Taxonomy_(biology)",
+            "size": 390398
+        },
+        {
+            "id": "Eukaryote",
+            "size": 496951
+        },
+        {
+            "id": "Animal",
+            "size": 759725
+        },
+        {
+            "id": "Arthropod",
+            "size": 733255
+        },
+        {
+            "id": "Insect",
+            "size": 767170
+        },
+        {
+            "id": "Lepidoptera",
+            "size": 756247
+        },
+        {
+            "id": "Noctuoidea",
+            "size": 168941
+        },
+        {
+            "id": "Noctuidae",
+            "size": 239166
+        },
+        {
+            "id": "Genus",
+            "size": 197162
+        },
+        {
+            "id": "Moth",
+            "size": 272399
+        }
+    ],
+    "edges": [
+        {
+            "source": "Fergana (moth)",
+            "target": "Fergana_(moth)"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Taxonomy_(biology)"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Eukaryote"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Animal"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Arthropod"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Insect"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Lepidoptera"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Noctuoidea"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Noctuidae"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Genus"
+        },
+        {
+            "source": "Fergana (moth)",
+            "target": "Moth"
+        }
+    ]
+}
