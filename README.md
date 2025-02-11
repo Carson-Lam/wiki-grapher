@@ -24,9 +24,9 @@ An intuitive Wikipedia Web Scraper that graphically represents the interconnecti
 
   1. [Requests](https://pypi.org/project/requests/)
   2. [BeautifulSoup](https://pypi.org/projectbeautifulsoup4/)
-  3. [NetworkX](https://networkx.org/)
-  4. [Matplotlib](https://matplotlib.org/)
-  5. [lxml](https://lxml.de/)
+  3. [D3.js](https://d3js.org/)
+  4. [lxml](https://lxml.de/)
+  5. [Flask](https://flask.palletsprojects.com/en/stable/)
 
 - Fonts from [DaFont](https://www.dafont.com/vcr-osd-mono.font)
 
@@ -36,7 +36,7 @@ This section outlines the current status of project developemnt
 | **Feature/Task**       | **Status**
 |------------------------|------------|
 | Single-page scraping | Complete ✅|
-| Link retrieval | Partially Complete ⚠|
+| Link retrieval | Complete ✅|
 | Retrieval Optimization | Partially Complete ⚠|
 | Graphical modeling | **Pending** 🕑|
 | Front End Design | **Pending** 🕑
