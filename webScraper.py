@@ -21,12 +21,15 @@ title = soup.find('h1', id = 'firstHeading')                 # (some pages have 
 body = [title] + list(title.find_all_next(True)) # Get all body elements
 
 # Link and Link Size storage
+# Node key (id) storage
 seen_links = set()
 edges = []
-
+id = -1
+ids = {}
 
 # Helper method for appending unique links
 def add_unique_links(elements):
+    global id
     for element in elements:
         href = element.get('href')
         img = element.find('img')
@@ -35,16 +38,25 @@ def add_unique_links(elements):
         if href and not img and not re.match(r'^/wiki/(Wikipedia:|Talk:|Special:|File:|Help:|Category:)', href) and href not in seen_links: 
 
             #Retrieve size of link's page 
-            response = requests.get(f'https://en.wikipedia.org{href}')
-            linkSize = len(response.content)
+            # response = requests.get(f'https://en.wikipedia.org{href}')
+            # linkSize = len(response.content)
 
             # Add link to seen_links as href and as a node to edgelist dictionary 
-            # Edgelist dictionary has: source (main page), target (link's page), size (link's pagesize)
-            seen_links.add(href)                      
+            id += 1
+            seen_links.add(href)      
+            target = href.replace('/wiki/', '') 
+
+            # Assign an ID (Key) to unique pages
+            if target not in ids:
+                ids[target] = id
+
+            # Edgelist dictionary has: source (source page), target (link's page), current page ID
+            # ---size (link's pagesize) IN PROGRESS---
             edges.append({
                 'source': title.text, 
                 'target': href.replace('/wiki/', ''),
-                'size': linkSize
+                'page-id': ids[target]
+                # 'size': linkSize
             })
 
 # Iterate through scraped data
@@ -68,8 +80,8 @@ for element in body:
 
 # Format dictionary "edges" into two json lists
 graph_data = {
-    'nodes': [{'id': link['target'], 'size': link['size']} for link in edges], 
-    'edges': [{'source': link['source'], 'target': link['target']} for link in edges]
+    'nodes': [{'id': link['page-id'], 'label': link['target']} for link in edges],
+    'links': [{'source': 0, 'target': link['page-id']} for link in edges]
 }
 
 # Print to json file
