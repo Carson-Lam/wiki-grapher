@@ -1,94 +1,94 @@
 {
     "nodes": [
         {
-            "id": "Fergana_(moth)",
-            "size": 65380
+            "id": 0,
+            "label": "Fergana_(moth)"
         },
         {
-            "id": "Taxonomy_(biology)",
-            "size": 390398
+            "id": 1,
+            "label": "Taxonomy_(biology)"
         },
         {
-            "id": "Eukaryote",
-            "size": 496951
+            "id": 2,
+            "label": "Eukaryote"
         },
         {
-            "id": "Animal",
-            "size": 759725
+            "id": 3,
+            "label": "Animal"
         },
         {
-            "id": "Arthropod",
-            "size": 733255
+            "id": 4,
+            "label": "Arthropod"
         },
         {
-            "id": "Insect",
-            "size": 767170
+            "id": 5,
+            "label": "Insect"
         },
         {
-            "id": "Lepidoptera",
-            "size": 756247
+            "id": 6,
+            "label": "Lepidoptera"
         },
         {
-            "id": "Noctuoidea",
-            "size": 168941
+            "id": 7,
+            "label": "Noctuoidea"
         },
         {
-            "id": "Noctuidae",
-            "size": 239166
+            "id": 8,
+            "label": "Noctuidae"
         },
         {
-            "id": "Genus",
-            "size": 197162
+            "id": 9,
+            "label": "Genus"
         },
         {
-            "id": "Moth",
-            "size": 272399
+            "id": 10,
+            "label": "Moth"
         }
     ],
-    "edges": [
+    "links": [
         {
-            "source": "Fergana (moth)",
-            "target": "Fergana_(moth)"
+            "source": 0,
+            "target": 0
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Taxonomy_(biology)"
+            "source": 0,
+            "target": 1
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Eukaryote"
+            "source": 0,
+            "target": 2
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Animal"
+            "source": 0,
+            "target": 3
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Arthropod"
+            "source": 0,
+            "target": 4
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Insect"
+            "source": 0,
+            "target": 5
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Lepidoptera"
+            "source": 0,
+            "target": 6
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Noctuoidea"
+            "source": 0,
+            "target": 7
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Noctuidae"
+            "source": 0,
+            "target": 8
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Genus"
+            "source": 0,
+            "target": 9
         },
         {
-            "source": "Fergana (moth)",
-            "target": "Moth"
+            "source": 0,
+            "target": 10
         }
     ]
 }
