@@ -50,12 +50,13 @@ def add_unique_links(elements):
             if target not in ids:
                 ids[target] = id
 
-            # Edgelist dictionary has: source (source page), target (link's page), current page ID
+            # Edgelist dictionary has: source (source page), target (link's page), current page ID, source page ID
             # ---size (link's pagesize) IN PROGRESS---
             edges.append({
                 'source': title.text, 
                 'target': href.replace('/wiki/', ''),
-                'page-id': ids[target]
+                'page-id': ids[target],
+                'source-id': 0 #Set source ID to title page
                 # 'size': linkSize
             })
 
@@ -81,7 +82,7 @@ for element in body:
 # Format dictionary "edges" into two json lists
 graph_data = {
     'nodes': [{'id': link['page-id'], 'label': link['target']} for link in edges],
-    'links': [{'source': 0, 'target': link['page-id']} for link in edges]
+    'links': [{'source': link['source-id'], 'target': link['page-id']} for link in edges]
 }
 
 # Print to json file

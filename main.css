@@ -1,0 +1,32 @@
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+    background-color: red;
+}
+
+#container {
+    margin: auto;
+}
+
+.circle {
+    width: 16px;
+    height: 11px;
+    position: absolute;
+    background: red no-repeat;
+}
+
+/* Style for the nodes (circles) */
+.node {
+    fill: red;
+    stroke: black;
+    stroke-width: 1.5px;
+    r: 15;
+}
+
+/* Style for the links (lines) */
+.link {
+    stroke: red;
+    stroke-opacity: 1;
+}
