@@ -42,17 +42,23 @@ def scrape():
         # Add edges and target nodes 
         for page_name, data in graph.items():
             for target in data['links']:
+                target_depth = data['depth'] + 1
+
+                # Only add target if within max_depth
                 if target not in nodes_dict:
-                    nodes_dict[target] = {
-                        'id': target,
-                        'label': target,
-                        'depth': data['depth'] + 1
-                    }
+                    if target_depth <= depth:  # ← Check depth limit
+                        nodes_dict[target] = {
+                            'id': target,
+                            'label': target,
+                            'depth': target_depth
+                        }
                 
-                edges.append({
-                    'source': page_name,
-                    'target': target
-                })
+                # Only add edge if target is within depth
+                if target in nodes_dict:  # ← Only if target was added
+                    edges.append({
+                        'source': page_name,
+                        'target': target
+                    })
         
         nodes = list(nodes_dict.values())
 

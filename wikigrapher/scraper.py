@@ -131,16 +131,16 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
     print(f"Finished! Scraped {len(visited)} pages")
     return graph
 
-# Test 
-if __name__ == '__main__':
-    # Test BFS
-    graph = build_graph_bfs('Fergana_(moth)', max_pages=20, max_depth=2)
+# UNUSED: DEBUG 
+# if __name__ == '__main__':
+#     # Test BFS
+#     graph = build_graph_bfs('Fergana_(moth)', max_pages=20, max_depth=2)
     
-    print("\nGraph structure:")
-    for page, data in list(graph.items())[:]:
-        print(f"{page} (depth {data['depth']}): {len(data['links'])} links")
+#     print("\nGraph structure:")
+#     for page, data in list(graph.items())[:]:
+#         print(f"{page} (depth {data['depth']}): {len(data['links'])} links")
     
-    print(graph)
+#     print(graph)
 
 # UNUSED: Building one-level of interconnected scraped pages
 # def build_graph_one_level(start_page):
