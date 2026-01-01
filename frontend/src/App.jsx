@@ -1,15 +1,52 @@
 import {useState} from 'react';
+import Graph from './Graph';
 
 function App(){
   const [page, setPage] = useState('');
   const [depth, setDepth] = useState(2);
-  const handleViz = () => {
-    console.log('Fetching:', page, 'w/ depth:', depth);
+  const [graphData, setGraphData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  };
+  const handleViz = async () => {
+    if (!page.trim()) {
+      alert('Please enter a wikipedia page name');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    setGraphData(null);
+
+    try {
+      const maxPages = depth === 1 ? 100 : depth === 2 ? 50 : 30;
+      const response = await fetch(
+        `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=100`
+      );
+      
+      if (!response.ok){
+        throw new Error('failed to fetch');
+      }
+
+      const data = await response.json();
+
+      if (data.error){
+        throw new Error(data.error);
+      }
+
+      console.log('Got data:', data);
+      setGraphData(data);
+    } catch (err) {
+      setError(err.message);
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div style ={{padding: '20px'}}>
+    <div style ={{
+        padding: '20px'
+      }}>
       <h1>Wikipedia Graph Visualizer</h1>
       <input 
         type="text" 
@@ -19,7 +56,9 @@ function App(){
         style={{ padding: '10px', width: '300px' }}
       />
 
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ 
+          marginTop: '20px' 
+        }}>
         <label>Depth: {depth}</label>
         <input 
           type="range"
@@ -45,6 +84,16 @@ function App(){
       <p>
         You typed: {page}        
       </p>
+      {loading && <p>Loading...</p>}
+      {error && <p style ={{color: 'red'}}>Error: {error}</p>}
+      {graphData && (
+        <div>
+          <p>Found {graphData.stats.total_nodes} nodes 
+            and {graphData.stats.total_edges} edges
+          </p>
+          <Graph data = {graphData}/>
+        </div>
+      )}
     </div>
   )
 }

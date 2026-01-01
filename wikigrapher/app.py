@@ -5,6 +5,10 @@ from scraper import build_graph_bfs
 app = Flask(__name__)
 CORS(app) # React <--> flask communication
 
+@app.route('/') 
+def working():
+    return 'hello'
+
 @app.route('/api/scrape', methods=['GET'])
 def scrape():
     """
@@ -26,6 +30,7 @@ def scrape():
         return jsonify({'error': 'Missing page parameter'}), 400
     
     try:
+        # Call scraper.py scraping function
         graph = build_graph_bfs(page, max_pages=max_pages, max_depth=depth)
 
         nodes_dict = {}
@@ -39,27 +44,15 @@ def scrape():
                 'depth': data['depth']
             }
         
-        # Add edges and target nodes 
+        # Add edges and target nodes (children of scraped)
         for page_name, data in graph.items():
             for target in data['links']:
-                target_depth = data['depth'] + 1
-
-                # Only add target if within max_depth
-                if target not in nodes_dict:
-                    if target_depth <= depth:  # ← Check depth limit
-                        nodes_dict[target] = {
-                            'id': target,
-                            'label': target,
-                            'depth': target_depth
-                        }
-                
                 # Only add edge if target is within depth
-                if target in nodes_dict:  # ← Only if target was added
+                if target in nodes_dict: 
                     edges.append({
                         'source': page_name,
                         'target': target
                     })
-        
         nodes = list(nodes_dict.values())
 
         return jsonify({
@@ -75,7 +68,9 @@ def scrape():
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    return jsonify({'status': 'ok'})
+    return jsonify({
+        'status': 'ok'
+    })
 
 if __name__ == '__main__':
     print("Starting Flask server on http://localhost:5000")
