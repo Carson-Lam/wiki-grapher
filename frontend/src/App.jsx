@@ -4,6 +4,7 @@ import Graph from './Graph';
 function App(){
   const [page, setPage] = useState('');
   const [depth, setDepth] = useState(2);
+  const [maxPages, setMaxPages] = useState(100);
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,9 +19,8 @@ function App(){
     setGraphData(null);
 
     try {
-      const maxPages = depth === 1 ? 100 : depth === 2 ? 50 : 30;
       const response = await fetch(
-        `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=100`
+        `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=${maxPages}`
       );
       
       if (!response.ok){
@@ -66,6 +66,20 @@ function App(){
           max="5"
           value={depth}
           onChange={(e) => setDepth(e.target.value)}
+        />
+      </div>
+
+      <div style={{ 
+          marginTop: '20px' 
+        }}>
+        <label>Max Pages to Scrape: {maxPages}</label>
+        <input 
+          type="range"
+          min="10"
+          max="300"
+          step="10"
+          value={maxPages}
+          onChange={(e) => setMaxPages(parseInt(e.target.value))}
         />
       </div>
 
