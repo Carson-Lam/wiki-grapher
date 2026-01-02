@@ -9,6 +9,7 @@ function Graph({ data }) {
     const [graphData, setGraphData] = useState(null);
     const [highlightNodes, setHighlightNodes] = useState(new Set());
     const [highlightLinks, setHighlightLinks] = useState(new Set());
+    const totalAvailableNodes = data?.nodes?.length || 0;
 
     // ============================================
     // SECTION 1: PREPARE GRAPH DATA
@@ -17,6 +18,8 @@ function Graph({ data }) {
     // It transforms raw Wikipedia data into graph format
     useEffect(() => {
         if (!data) return;
+
+        setMaxNodesToShow(Math.min(maxNodesToShow, totalAvailableNodes));
 
         // Color nodes by their depth (distance from starting page)
         const getNodeColor = (depth) => {
@@ -46,12 +49,12 @@ function Graph({ data }) {
             name: node.label.replace(/_/g, ' '),
             depth: node.depth,
             color: getNodeColor(node.depth),
-            val: node.depth === 0 ? 70 : 40, // Center node is bigger
+            val: 70 - (node.depth * 20), // Center node is bigger
         }));
 
         // Transform links: only include links between visible nodes
         const links = data.edges
-            .filter(edge => nodeIds.has(edge.source) && nodeIds.has(edge.target))
+            .filter(edge => nodeIds.has(edge.source) && nodeIds.has(edge.target) && edge.source !== edge.target)
             .map(edge => ({
                 source: edge.source,
                 target: edge.target,
@@ -64,8 +67,8 @@ function Graph({ data }) {
         setTimeout(() => {
             if (graphRef.current) {
                 // EXPANSION FORCE
-                graphRef.current.d3Force('charge', d3.forceManyBody().strength(-100));
-                graphRef.current.d3Force('link', d3.forceLink().distance(100).strength(0.5));
+                graphRef.current.d3Force('charge', d3.forceManyBody().strength(-200));
+                graphRef.current.d3Force('link', d3.forceLink().distance(200).strength(0.5));
                 graphRef.current.d3Force('collide', d3.forceCollide().radius(node => node.val * 1.1).strength(1));
 
                 // CENTERING FORCE
@@ -114,21 +117,6 @@ function Graph({ data }) {
         }
     }, [graphData]);
 
-    // // Drag handlers to control simulation behavior
-    // const handleNodeDrag = useCallback((node) => {
-    //     if (graphRef.current) {
-    //         // Keep simulation active but calm during drag
-    //         graphRef.current.d3AlphaTarget(0.1);
-    //     }
-    // }, []);
-
-    // const handleNodeDragEnd = useCallback((node) => {
-    //     if (graphRef.current) {
-    //         // Let simulation cool down after drag
-    //         graphRef.current.d3AlphaTarget(0);
-    //     }
-    // }, []);
-
     // ============================================
     // SECTION 3: CUSTOM RENDERING
     // ============================================
@@ -136,7 +124,6 @@ function Graph({ data }) {
     const paintNode = useCallback((node, ctx, globalScale) => {
         const isHighlighted = highlightNodes.has(node.id);
         // const showLabel = globalScale > 1.2 || node.depth === 0 || isHighlighted; -- show labels when zoomed in or highlighted
-        const showLabel = true;
         
         // Draw node circle
         ctx.beginPath();
@@ -151,21 +138,20 @@ function Graph({ data }) {
         ctx.stroke();
         ctx.globalAlpha = 1;
         
-        // Draw label if zoomed in enough or highlighted
-        if (showLabel) {
-            const fontSize = 15 / globalScale;
-            ctx.font = `${fontSize}px Sans-Serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
-            ctx.fillStyle = '#333';
-            ctx.fillText(node.name, node.x, node.y + node.val + 2);
-        }
+        // Draw label 
+        const fontSize = 15 / globalScale;
+        ctx.font = `${fontSize}px Sans-Serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#333';
+        ctx.globalAlpha = isHighlighted || highlightNodes.size === 0 ? 1 : 0.25;g
+        ctx.fillText(node.name, node.x, node.y + node.val + 2);
+
     }, [highlightNodes]);
 
     // Custom link rendering: draw lines with arrows
     const paintLink = useCallback((link, ctx) => {
         const isHighlighted = highlightLinks.has(link);
-        const shouldDrawArrow = isHighlighted || highlightLinks.size === 0;
         
         // Draw line
         ctx.beginPath();
@@ -177,30 +163,26 @@ function Graph({ data }) {
         ctx.stroke();
         ctx.globalAlpha = 1;
         
-        // Draw arrow at target
-        if (shouldDrawArrow) {
-            const arrowSize = 8;
-            const angle = Math.atan2(
-                link.target.y - link.source.y,
-                link.target.x - link.source.x
-            );
+        // Draw arrows
+        if (isHighlighted) {
+            const arrowSize = 10;
+            const angle = Math.atan2(link.target.y - link.source.y, link.target.x - link.source.x);
             
+            // Position arrow at edge of target node
             const arrowX = link.target.x - Math.cos(angle) * (link.target.val + 5);
             const arrowY = link.target.y - Math.sin(angle) * (link.target.val + 5);
             
+            ctx.save();
+            ctx.translate(arrowX, arrowY);
+            ctx.rotate(angle);
             ctx.beginPath();
-            ctx.moveTo(arrowX, arrowY);
-            ctx.lineTo(
-                arrowX - arrowSize * Math.cos(angle - Math.PI / 6),
-                arrowY - arrowSize * Math.sin(angle - Math.PI / 6)
-            );
-            ctx.lineTo(
-                arrowX - arrowSize * Math.cos(angle + Math.PI / 6),
-                arrowY - arrowSize * Math.sin(angle + Math.PI / 6)
-            );
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-arrowSize, arrowSize / 2);
+            ctx.lineTo(-arrowSize, -arrowSize / 2);
             ctx.closePath();
             ctx.fillStyle = isHighlighted ? '#000000' : '#999999';
             ctx.fill();
+            ctx.restore();
         }
     }, [highlightLinks]);
 
@@ -239,15 +221,15 @@ function Graph({ data }) {
                         </label>
                         <input 
                             type="range"
-                            min="20"
-                            max="300"
-                            step="20"
+                            min="1"
+                            max={totalAvailableNodes}
+                            step="1"
                             value={maxNodesToShow}
                             onChange={(e) => setMaxNodesToShow(parseInt(e.target.value))}
                             style={{ width: '100%' }}
                         />
                         <div style={{ fontSize: '12px', color: '#777', marginTop: '4px' }}>
-                            Total available: {data?.nodes?.length || 0} nodes
+                            Total available: {totalAvailableNodes} nodes
                         </div>
                     </div>
                     
@@ -327,14 +309,12 @@ function Graph({ data }) {
                     <ForceGraph2D
                         ref={graphRef}
                         graphData={graphData}
-                        nodeLabel="name"
+
                         nodeCanvasObject={paintNode}
                         linkCanvasObject={paintLink}
+
                         onNodeClick={handleNodeClick}
                         onNodeHover={handleNodeHover}
-
-                        // onNodeDrag={handleNodeDrag}
-                        // onNodeDragEnd={handleNodeDragEnd}
 
                         width={Math.min(window.innerWidth - 80, 1400)}
                         height={600}

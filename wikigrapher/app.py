@@ -22,8 +22,8 @@ def scrape():
 
     # Get parameters
     page = request.args.get('page')
-    depth = int(request.args.get('depth', 2)) # defaults to 2
-    max_pages = int(request.args.get('max_pages', 300)) #defaults to 100 pages
+    depth = int(request.args.get('depth', 2))
+    max_pages = int(request.args.get('max_pages', 50)) 
 
     # Validate
     if not page:

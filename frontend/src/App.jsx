@@ -4,7 +4,7 @@ import Graph from './Graph';
 function App(){
   const [page, setPage] = useState('');
   const [depth, setDepth] = useState(2);
-  const [maxPages, setMaxPages] = useState(100);
+  const [maxPages, setMaxPages] = useState('50');
   const [graphData, setGraphData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -14,13 +14,19 @@ function App(){
       alert('Please enter a wikipedia page name');
       return;
     }
+
+    if (!maxPages || maxPages < 1 || !(Number.isInteger(Number(maxPages)))) {
+      alert('Please enter a valid max pages value (Positive Integer)');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setGraphData(null);
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=${maxPages}`
+        `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=${Number(maxPages) || 1}`
       );
       
       if (!response.ok){
@@ -63,23 +69,28 @@ function App(){
         <input 
           type="range"
           min="1"
-          max="5"
+          max="3"
           value={depth}
-          onChange={(e) => setDepth(e.target.value)}
+          onChange={(e) => setDepth(Number(e.target.value))}
         />
       </div>
 
-      <div style={{ 
-          marginTop: '20px' 
-        }}>
-        <label>Max Pages to Scrape: {maxPages}</label>
+      <div style={{ marginTop: '20px' }}>
+        <label>Max Pages to Scrape: </label>
         <input 
-          type="range"
-          min="10"
-          max="300"
-          step="10"
+          type="number"
+          min="1"
+          max="500"
           value={maxPages}
-          onChange={(e) => setMaxPages(parseInt(e.target.value))}
+          onChange={(e) => setMaxPages(e.target.value)}
+          style={{ 
+            marginLeft: '10px',
+            padding: '8px',
+            width: '100px',
+            fontSize: '14px',
+            border: '1px solid #ccc',
+            borderRadius: '4px'
+          }}
         />
       </div>
 
