@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import * as d3 from 'd3-force';
+import './App.css';
 
 function Graph({ data }) {
     const graphRef = useRef();
@@ -129,7 +130,7 @@ function Graph({ data }) {
         ctx.beginPath();
         ctx.arc(node.x, node.y, node.val, 0, 2 * Math.PI);
         ctx.fillStyle = node.color;
-        ctx.globalAlpha = isHighlighted || highlightNodes.size === 0 ? 1 : 0.25;
+        ctx.globalAlpha = (isHighlighted || highlightNodes.size === 0) ? 1 : 0.5;
         ctx.fill();
         
         // Draw border
@@ -144,7 +145,7 @@ function Graph({ data }) {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
         ctx.fillStyle = '#333';
-        ctx.globalAlpha = isHighlighted || highlightNodes.size === 0 ? 1 : 0.25;g
+        ctx.globalAlpha = isHighlighted || highlightNodes.size === 0 ? 1 : 0; 
         ctx.fillText(node.name, node.x, node.y + node.val + 2);
 
     }, [highlightNodes]);
@@ -190,8 +191,9 @@ function Graph({ data }) {
     // SECTION 4: RENDER UI
     // ============================================ 
     return (
-        <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-            {/* Control Panel */}
+        <div id="graphContainer">
+            {/*
+            Control Panel
             <div style={{ 
                 marginBottom: '20px', 
                 padding: '20px', 
@@ -209,7 +211,7 @@ function Graph({ data }) {
                     gap: '20px',
                     marginBottom: '20px' 
                 }}>
-                    {/* Node Limit Control */}
+                    {/* Node Limit Control 
                     <div>
                         <label style={{ 
                             display: 'block', 
@@ -233,7 +235,7 @@ function Graph({ data }) {
                         </div>
                     </div>
                     
-                    {/* Depth Filter Control */}
+                    {/* Depth Filter Control }
                     <div>
                         <label style={{ 
                             display: 'block', 
@@ -264,7 +266,7 @@ function Graph({ data }) {
                     </div>
                 </div>
 
-                {/* Instructions */}
+                {/* Instructions }
                 <div style={{ 
                     padding: '15px', 
                     backgroundColor: 'white',
@@ -296,15 +298,10 @@ function Graph({ data }) {
                     </div>
                 </div>
             </div>
+            */}
             
             {/* Graph Canvas */}
-            <div style={{
-                border: '2px solid #ddd',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                backgroundColor: '#ffffff'
-            }}>
+            <div id="graphCanvas">
                 {graphData && (
                     <ForceGraph2D
                         ref={graphRef}
@@ -315,10 +312,6 @@ function Graph({ data }) {
 
                         onNodeClick={handleNodeClick}
                         onNodeHover={handleNodeHover}
-
-                        width={Math.min(window.innerWidth - 80, 1400)}
-                        height={600}
-                        backgroundColor="#fafafa"
                     />
                 )}
             </div>
