@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import Graph from './Graph';
+import toast from 'react-hot-toast';
+
 
 function Home(){
   const [page, setPage] = useState('');
   const [depth, setDepth] = useState(2);
   const [maxPages, setMaxPages] = useState('50');
-  const [previewGraph, setPreviewGraph] = useState(null);
   const navigate = useNavigate();
   const stepsRef = useRef([]);
 
@@ -39,12 +40,12 @@ function Home(){
 
   const handleViz = async () => {
     if (!page.trim()) {
-        alert('Please enter a wikipedia page name');
+        toast.error('Please enter a wikipedia page name');
         return;
     }
 
     if (!maxPages || maxPages < 1 || !(Number.isInteger(Number(maxPages)))) {
-        alert('Please enter a valid max pages value (Positive Integer)');
+        toast.error('Please enter a valid max pages value!');
         return;
     }
 
@@ -62,7 +63,7 @@ function Home(){
           The Free Graph Visualizer
         </h4>
 
-        <img id="logo"src="/assets/images/Wlogo.png" alt="Wikipedia Logo"/>
+        <img id="logo"src="/assets/images/WlogoT.png" alt="Wikipedia Logo"/>
 
         <div id="searchBar">
           <input 
@@ -86,8 +87,8 @@ function Home(){
           </button>
         </div>
 
-        <div class="controls">
-            <div class="control-group">
+        <div className="controls">
+            <div className="control-group">
                 <label>Depth: {depth}</label>
                 <input 
                   type="range"
@@ -97,7 +98,7 @@ function Home(){
                   onChange={(e) => setDepth(Number(e.target.value))}
                 />
             </div>
-            <div class="control-group">
+            <div className="control-group">
                 <label>Max Pages to Scrape:</label>
                 <input 
                   id= "pagesInput"
@@ -153,7 +154,7 @@ function Home(){
         <div className="feature-cards">
           <div className="feature-card">
             <h3><span className="feature-icon">➔</span> Adjustable Depth Control</h3>
-            <p>Control how many levels deep the graph explores. <p style={{color: 'red'}}>Deeper graphs may take more time to build.</p></p>
+            <p>Control how many levels deep the graph explores. <span style = {{color: 'red'}}>Deeper graphs may take more time to build.</span></p>
           </div>
           <div className="feature-card">
             <h3><span className="feature-icon">➔</span> Page Limit Customization</h3>
@@ -918,10 +919,9 @@ function Home(){
     {/* About Section */}
     <section className="scroll-section about">
       <div className="about-content">
-        <h2 className="section-title">About & Dependencies</h2>
+        <h2 className="section-title">About</h2>
         <p>
-          WikigrapheR visualizes the interconnected nature 
-          of human knowledge by mapping Wikipedia's link structure.
+          WikigrapheR visualizes human knowledge by mapping Wikipedia's link structure.
            Built as a demonstration of data scrapers, graph traversal algorithms 
            and data visualization libraries using <strong>BeautifulSoup 4</strong>, <strong>D3</strong>, and <strong>more</strong>. Further implementation details  
            available on Github.

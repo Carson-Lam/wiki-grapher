@@ -99,7 +99,6 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
     
     while queue and len(visited) < max_pages:
 
-
         current_page, depth = queue.pop(0)
         
         # Skip if already visited 
@@ -123,10 +122,6 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
         }
         visited.add(current_page)
         
-        # Add new links to queue
-        # for link in links:
-        #     if link not in visited:
-        #         queue.append((link, depth + 1))
         if max_depth is None or depth < max_depth:
             for link in links:
                 if link not in visited and not any(l[0] == link for l in queue):
@@ -135,6 +130,7 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
             print(f"  Reached max depth {max_depth}, not adding children to queue")
     
     print(f"Finished! Scraped {len(visited)} pages")
+
     return graph
 
 # UNUSED: DEBUG 
