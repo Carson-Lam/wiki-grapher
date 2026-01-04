@@ -1,6 +1,6 @@
 /* align: horiz, justify: vertical */
 /* ================================================ */
-/* Home CSS */
+/* Home Hero  */
 /* ================================================ */
 * {
   margin: 0;
@@ -10,7 +10,31 @@
 }
 
 :root {
+  --wiki-black: #000;
+  --wiki-gray: #54595d;
+  --wiki-light-gray: #f8f9fa;
+  --wiki-border: #a2a9b1;
   --wiki-blue: #3366cc;
+  --wiki-hover-blue: #4477dd;
+  --wiki-accent: #c9b37a;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: var(--wiki-black);
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+h1, h2, h3 {
+  font-family: 'Linux Libertine', 'Georgia', serif;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+}
+
+p {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--wiki-black);
 }
 
 @font-face {
@@ -20,53 +44,72 @@
   font-style: normal;
 }
 
+#heroSection {
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem 2rem 2rem;
+  position: relative; 
+}
 
 #container {
-    /* background-color: red; */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: start;
-    height: 100vh;
+  /* background-color: red; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #title {
-    font-family: 'Hoefler Text', serif;
-    font-weight: 1;
-    font-size: 50px;
-    margin-top: 10vh;
+  font-family: 'Hoefler Text', serif;
+  font-weight: 1;
+  font-size: 50px;
+  margin-top: 0vh;
 }
 
 #titleSub {
-    display: inline;
-    font-family: 'Hoefler Text', serif;
-    font-weight: 1;
-    font-size: 35px;
-    vertical-align: baseline;
+  display: inline;
+  font-family: 'Hoefler Text', serif;
+  font-weight: 1;
+  font-size: 35px;
+  vertical-align: baseline;
 }
 
 #subtitle {
-    font-family: 'Hoefler Text', serif;
-    font-weight: 1;
-    font-size: 20px;
+  font-family: 'Hoefler Text', serif;
+  font-weight: 1;
+  font-size: 20px;
 }
 
 #logo{
-  margin: 55px 0 55px 0;
+  margin: 3.45rem 0 3.45rem 0;
 }
 
 #searchBar {
   display: flex;
   flex-direction: row;
-  /* background-color: yellow; */
-  height: 4.5vh;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 2rem;
 }
 
 #inputBar {
   flex: 1;
-  width: 25vw;
-  font-size: 15px;
-  padding-left: 5px;
+  width: 100%;
+  font-size: 1rem;
+  padding: 1rem 20px;
+  border: 1px solid var(--wiki-border);
+  border-radius: 2px;
+  font-family: inherit; /* Apple system font */
+  transition: border-color 0.2s;
+}
+
+#inputBar:focus {
+  border-color: var(--wiki-blue);
+  outline: none;
 }
 
 #vizButton {
@@ -78,46 +121,339 @@
   font-size: 20px;
   cursor: pointer;
   padding: 5px 15px;
+  border: none;
+  transition: background-color 0.2s;
 }
 
-#depthDiv{
+#vizButton:hover {
+  background-color: var(--wiki-hover-blue);
+}
+
+.controls {
   display: flex;
   flex-direction: row;
+  gap: 2rem;
   justify-content: center;
-  align-items: center;    
-  font-family: 'Hoefler Text', serif;
-  font-size: 20px;
-  margin-top: 25px;
-  gap: 20px;
+  animation: fadeInUp 0.5s ease-out 0.3s forwards;
+  opacity: 0;
 }
 
-#pagesDiv{
+.control-group {
+  text-align: left;
   display: flex;
   flex-direction: row;
-  justify-content: center; 
-  align-items: center;   
-  font-family: 'Hoefler Text', serif;
-  font-size: 20px;
-  margin-top: 20px;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-#pagesInput{
-  padding: 8px;
-  width: 5%vw;
-  font-size: 15px;
-  border: 1px solid;
+.control-group label {
+  display: block;
+  font-size: 1rem;
+  color: var(--wiki-gray);
+}
+
+#pagesInput {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid var(--wiki-border);
+  border-radius: 2px;
+  font-family: inherit;
+}
+
+#pagesRange {
+  width: 120px;
+}
+
+#scrollIndicator {
+  position: absolute;
+  bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--wiki-gray);
+  animation: fadeInUp 1.0s ease-out 0.6s forwards; 
+  opacity: 0;
 }
 
 /* ================================================ */
-/* GraphPage CSS */
+/* Home Scroll  */
+/* ================================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+.scroll-section{
+  width: 100%;
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  text-align: center;
+  position: relative;
+  margin-bottom: 4rem; /* Distance betwen underline and next element */
+  padding-bottom: 1rem; /* Distance between title and underline */
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: var(--wiki-accent);
+}
+
+/* ================================================ */
+/* How It Works  */
+/* ================================================ */
+.how-it-works{
+  background: var(--wiki-light-gray);
+  padding: 6rem 2rem 8rem;
+  min-height: 65vh;
+  display: flex;
+  align-items: center;
+}
+
+.steps {
+  /* background-color: red; */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+}
+
+.step {
+  text-align: center;
+}
+
+.step-icon {
+  /* background-color: yellow; */
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Linux Libertine', 'Georgia', serif;
+  color: var(--wiki-gray);
+  border: 2px solid var(--wiki-border);
+  border-radius: 50%;
+}
+
+.step h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+.step p {
+  color: var(--wiki-gray);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* ================================================ */
+/* Features  */
+/* ================================================ */
+.features {
+  background: #fff;
+  padding: 6rem 2rem 8rem;
+  min-height: 65vh;
+  display: flex;
+  align-items: center;
+}
+
+.feature-cards {
+  /* background-color: red; */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin: 0 auto;
+}
+
+.feature-card {
+  border: 1px solid var(--wiki-border);
+  padding: 2.5rem;
+  background: #fff;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.feature-card:hover {
+  border-color: var(--wiki-blue);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.feature-card h3 {
+  /* background-color: red; */
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 400;
+}
+
+.feature-icon {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--wiki-accent);
+}
+
+.feature-card p {
+  color: var(--wiki-gray);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+/* ========================================== */
+/* EXAMPLE SECTION */
+/* ========================================== */
+.example {
+  background: var(--wiki-light-gray);
+  padding: 6rem 2rem 4rem;
+  min-height: 65vh;
+}
+
+.example-caption {
+  color: var(--wiki-gray);
+  font-style: italic;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.example-graph-container{
+  width: 100%;
+  height: 65vh;
+  margin: 3rem auto;
+  border: 1px solid var(--wiki-border);
+  background: #fffff7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.example-graph-container #graphContainer {
+  width: 100% !important;
+  height: 100% !important;
+
+}
+
+.example-graph-container #graphCanvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ========================================== */
+/* ABOUT SECTION */
+/* ========================================== */
+.about {
+  background: #fff;
+  padding: 6rem 2rem 8rem;
+  min-height: 65vh;
+  display: flex;
+  align-items: center;
+}
+
+.about-content {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-content p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: var(--wiki-gray);
+  margin-bottom: 2rem;
+}
+
+.tech-stack {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.tech-badge {
+  padding: 0.5rem 1.25rem;
+  background: var(--wiki-light-gray);
+  border: 1px solid var(--wiki-border);
+  font-size: 0.9rem;
+  color: var(--wiki-gray);
+  font-weight: 500;
+}
+
+.cta-link {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: var(--wiki-blue);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.cta-link:hover {
+  background: var(--wiki-hover-blue);
+}
+
+/* ================================================ */
+/* FOOTER  */
+/* ================================================ */
+.footer {
+  background: var(--wiki-light-gray);
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+  border-top: 1px solid var(--wiki-border);
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.footer-links a {
+  color: var(--wiki-blue);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--wiki-hover-blue);
+  text-decoration: underline;
+}
+
+.footer-credits {
+  color: var(--wiki-gray);
+  font-size: 0.85rem;
+}
+
+/* ================================================ */
+/* GraphPage  */
 /* ================================================ */
 #backButton{
   z-index: 1000;
   position: absolute;  
   top: 20px;           
   left: 20px;          
-  padding: 10px 15px;  /* add some click/tap area */
+  padding: 10px 15px;  
   font-family: 'Helvetica', sans-serif;
   font-size: 18px;
   cursor: pointer;
@@ -129,7 +465,7 @@
 
 #graphPageContainer{
   position: relative;
-  background-color: red;
+  /* background-color: red; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -148,7 +484,7 @@
 }
 
 /* ================================================ */
-/* Graph CSS */
+/* Graph  */
 /* ================================================ */
 #graphContainer{
   width: 100vw;     
@@ -157,6 +493,67 @@
 
 #graphCanvas{
   width: 100%;    
-  height: 100%;     
-  background-color: #fafafa;
+  height: 100%;   
 }
+
+/* ================================================ */
+/* ANIMATIONS */
+/* ================================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .feature-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+/* Initial state: */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Visible */
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger */
+.step.animate-on-scroll:nth-child(1) {
+  transition-delay: 0s;
+}
+
+.step.animate-on-scroll:nth-child(2) {
+  transition-delay: 0.15s;
+}
+
+.step.animate-on-scroll:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
