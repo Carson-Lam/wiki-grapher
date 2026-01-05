@@ -14,36 +14,51 @@ function GraphPage() {
     const maxPages = searchParams.get('max_pages');    
 
     useEffect(() => {
-        const fetchGraph = async () => {
-            setLoading(true);
-            setError(null);
+        const fetchGraph = async (isRetry = false) => {
+            if (!isRetry) {
+                setLoading(true);
+                setError(null);
+            }
             try {
                 const response = await fetch(
                     `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=${Number(maxPages) || 1}`
                 );
+
+                const data = await response.json();
                 
+                // Catch attempt to duplicate case
+                if (response.status === 429) {
+                    if (!isRetry) setError('A scrape is already in progress. Aborting and Restarting scrape:');
+
+                    setTimeout(() => {
+                        fetchGraph(true); 
+                    }, 2000);
+                    return;
+                }
+
                 if (!response.ok){
                     throw new Error('failed to fetch');
                 }
-
-                const data = await response.json();
 
                 if (data.error){
                     throw new Error(data.error);
                 }
 
-                    console.log('Got data:', data);
-                    setGraphData(data);
-                } catch (err) {
-                    setError(err.message);
-                    console.error('Error:', err);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            if (page) {
-                fetchGraph();
+                console.log('Got data:', data);
+                setGraphData(data);
+                setLoading(false);
+                setError(null);
+
+            } catch (err) {
+                setError(err.message);
+                console.error('Error:', err);
+                setLoading(false);
+
             }
+        };
+        if (page) {
+            fetchGraph();
+        }
     }, [page, depth, maxPages]);
 
     return (

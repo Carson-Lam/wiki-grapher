@@ -33,6 +33,10 @@ def scrape():
         # Call scraper.py scraping function
         graph = build_graph_bfs(page, max_pages=max_pages, max_depth=depth)
 
+        if graph is None:
+            return jsonify({'error': 'Another scrape is already in progress. Please wait.'}), 429
+
+
         nodes_dict = {}
         edges = []
 

@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import threading
 
+scrape_lock = threading.Lock()
 def scrape_page(url):
     """
     Scrapes a single Wikipedia page and returns a list of linked pages.
@@ -91,48 +93,48 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
             ...
         }
     """
-    graph = {}
-    visited = set()
-    queue = [(start_page, 0)]  # (page_name, depth)
+    if not scrape_lock.acquire(blocking=False):
+        print(f"Another scrape is already in progress. Rejecting request for {start_page}")
+        return None
     
-    print(f"Starting BFS from {start_page}")
-    
-    while queue and len(visited) < max_pages:
+    try:
+        graph = {}
+        visited = set()
+        queue = [(start_page, 0)]
+        
+        print(f"Starting BFS from {start_page}")
+        
+        while queue and len(visited) < max_pages:
+            current_page, depth = queue.pop(0)
+            
+            if current_page in visited:
+                continue
+            
+            if max_depth is not None and depth > max_depth:
+                continue
+            
+            print(f"Scraping ({len(visited)+1}/{max_pages}): {current_page} (depth {depth})")
 
-        current_page, depth = queue.pop(0)
+            links = scrape_page(f'https://en.wikipedia.org/wiki/{current_page}')
+            
+            graph[current_page] = {
+                'links': links,
+                'depth': depth
+            }
+            visited.add(current_page)
+            
+            if max_depth is None or depth < max_depth:
+                for link in links:
+                    if link not in visited and not any(l[0] == link for l in queue):
+                        queue.append((link, depth + 1))
+            else:
+                print(f"  Reached max depth {max_depth}, not adding children to queue")
         
-        # Skip if already visited 
-        if current_page in visited:
-            continue
-        
-        # Stop if max depth reached
-        if max_depth is not None and depth > max_depth:
-            continue
-        
-        print(f"Scraping ({len(visited)+1}/{max_pages}): {current_page} (depth {depth})")
-
-        # Scrape the page
-        # current_url = f'https://en.wikipedia.org/wiki/{current_page}'
-        links = scrape_page(f'https://en.wikipedia.org/wiki/{current_page}')
-        
-        # Add to graph with depth info
-        graph[current_page] = {
-            'links': links,
-            'depth': depth
-        }
-        visited.add(current_page)
-        
-        if max_depth is None or depth < max_depth:
-            for link in links:
-                if link not in visited and not any(l[0] == link for l in queue):
-                    queue.append((link, depth + 1))
-        else:
-            print(f"  Reached max depth {max_depth}, not adding children to queue")
-    
-    print(f"Finished! Scraped {len(visited)} pages")
-
-    return graph
-
+        print(f"Finished! Scraped {len(visited)} pages")
+        return graph
+    finally:
+        scrape_lock.release()
+        print("Scrape lock released")
 # UNUSED: DEBUG 
 # if __name__ == '__main__':
 #     # Test BFS
