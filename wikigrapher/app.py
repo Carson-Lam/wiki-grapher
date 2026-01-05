@@ -37,7 +37,6 @@ def scrape():
         if graph is None:
             return jsonify({'error': 'Another scrape is already in progress. Please wait.'}), 429
 
-
         nodes_dict = {}
         edges = []
 
@@ -81,7 +80,7 @@ def health():
 def stopScrape():
     import scraper
     scraper.stop_scraping = True
-    stop_scraping = True
+    return jsonify({'status': 'stopping'})
 
 if __name__ == '__main__':
     print("Starting Flask server on http://localhost:5000")

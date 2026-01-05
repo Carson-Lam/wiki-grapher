@@ -97,7 +97,7 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
     """
     global stop_scraping
     stop_scraping = False
-    
+
     if not scrape_lock.acquire(blocking=False):
         print(f"Another scrape is already in progress. Rejecting request for {start_page}")
         return None
@@ -145,6 +145,7 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
     finally:
         scrape_lock.release()
         print("Scrape lock released")
+
 # UNUSED: DEBUG 
 # if __name__ == '__main__':
 #     # Test BFS

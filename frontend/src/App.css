@@ -472,12 +472,7 @@ html {
   align-items: center;
   height: 100vh;
 }
-#loadingText{
-  font-family: 'Helvetica', sans-serif;
-  font-size: 50px;
-  color: black;
-}
-#errorText{
+#screenText{
   font-family: 'Helvetica', sans-serif;
   font-size: 50px;
   color: black;
