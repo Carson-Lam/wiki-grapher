@@ -4,6 +4,8 @@ import re
 import threading
 
 scrape_lock = threading.Lock()
+stop_scraping = False
+
 def scrape_page(url):
     """
     Scrapes a single Wikipedia page and returns a list of linked pages.
@@ -93,6 +95,9 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
             ...
         }
     """
+    global stop_scraping
+    stop_scraping = False
+    
     if not scrape_lock.acquire(blocking=False):
         print(f"Another scrape is already in progress. Rejecting request for {start_page}")
         return None
@@ -105,6 +110,11 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
         print(f"Starting BFS from {start_page}")
         
         while queue and len(visited) < max_pages:
+
+            if stop_scraping:
+                print("scraping aborted")
+                return
+
             current_page, depth = queue.pop(0)
             
             if current_page in visited:

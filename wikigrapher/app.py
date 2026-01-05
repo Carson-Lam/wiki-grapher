@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from scraper import build_graph_bfs
+from scraper import build_graph_bfs, stop_scraping
+
 
 app = Flask(__name__)
 CORS(app) # React <--> flask communication
@@ -75,6 +76,12 @@ def health():
     return jsonify({
         'status': 'ok'
     })
+
+@app.route('/api/scrape/stop', methods=['GET'])
+def stopScrape():
+    import scraper
+    scraper.stop_scraping = True
+    stop_scraping = True
 
 if __name__ == '__main__':
     print("Starting Flask server on http://localhost:5000")
