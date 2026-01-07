@@ -18,6 +18,8 @@ function Home(){
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   // Handle search bar enter 
   const handleInputChange = (e) => {
     // value = value of parent event container (search bar)
