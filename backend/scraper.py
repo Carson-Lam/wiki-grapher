@@ -28,8 +28,9 @@ def scrape_page(url):
         print(f"Error fetching {url}: {e}")
         return []
     
-    soup = BeautifulSoup(response.text, 'lxml')
-    
+    # soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response.text, 'html.parser')
+
     # Body and stop point handling
     # stop at either See Also/References
     # Get all body elements
