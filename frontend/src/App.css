@@ -750,3 +750,9 @@ input[type="range"]::-moz-range-thumb {
   transition-delay: 0.3s;
 }
 
+/* ================================================ */
+/* MOBILE SUPPORT */
+/* ================================================ */
+#backButton, #dropDownButton {
+  color: #000 !important;
+}
