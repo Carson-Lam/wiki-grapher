@@ -10,8 +10,55 @@ function Home(){
   const [depth, setDepth] = useState(2);
   const [maxPages, setMaxPages] = useState('50');
   const navigate = useNavigate();
+
+  // Animated steps
   const stepsRef = useRef([]);
 
+  // Search suggestions
+  const searchTimeoutRef = useRef(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Handle search bar enter 
+  const handleInputChange = (e) => {
+    // value = value of parent event container (search bar)
+    const value = e.target.value;
+    setPage(value);
+
+    // clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Search query too short
+    if (value.length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return
+    }
+    
+    // debouncing to prevent too many API calls
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/search?q=${encodeURIComponent(value)}`);
+        const data = await response.json();
+        setSuggestions(data.suggestions || []);
+        setShowSuggestions(true);
+      } catch (err) {
+        console.error('Search error:', err);
+        setSuggestions([]);
+      }
+    }, 200);
+  }
+
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion) => {
+    setPage(suggestion.title);
+    setShowSuggestions(false);
+    setSuggestions([]);
+  }
+
+  // Steps animate on scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -38,6 +85,7 @@ function Home(){
     };
   }, []);
 
+  // Function to handle page input & send to graph page
   const handleViz = async () => {
     if (!page.trim()) {
         toast.error('Please enter a wikipedia page name');
@@ -51,6 +99,17 @@ function Home(){
 
     navigate(`/graph?page=${page}&depth=${depth}&max_pages=${maxPages}`);
   };
+
+  // Hook to detect click outside parent element (search bar)
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('#searchBar')) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  })
 
   return (
     <>
@@ -71,10 +130,14 @@ function Home(){
             type="text" 
             placeholder="Enter Wikipedia page"
             value={page}
-            onChange={(e)=>setPage(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
+                setShowSuggestions(false);
                 handleViz();
+              }
+              if (e.key === "Escape") {
+                setShowSuggestions(false);
               }
             }}
             autoComplete="off"
@@ -85,6 +148,19 @@ function Home(){
           >
             🔎︎
           </button>
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="suggestions-dropdown">
+              {suggestions.map((suggestion, index) => (
+                <div 
+                  key={index}
+                  className="suggestion-item"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  <div className="suggestion-title">{suggestion.title}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="controls">
