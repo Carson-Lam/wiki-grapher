@@ -26,10 +26,10 @@ function Graph({ data }) {
         // Color nodes by their depth (distance from starting page)
         const getNodeColor = (depth) => {
             const colors = {
-                0: '#ff4444', // starting page
-                1: '#4444ff', // 1 click away
-                2: '#44ff44', // 2 clicks away
-                3: '#ffaa44', // 3+ clicks away
+                0: '#1755d3ff', // starting page
+                1: '#7b8ceaff', // 1 click away
+                2: '#95a98fff', // 2 clicks away
+                3: '#9a8f74', // 3+ clicks away
             };
             return colors[depth] || '#888888';
         };
@@ -142,7 +142,7 @@ function Graph({ data }) {
         
         // Draw label 
         const fontSize = 15 / globalScale;
-        ctx.font = `${fontSize}px Sans-Serif`;
+        ctx.font = `${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI"`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
         ctx.fillStyle = '#333';

@@ -189,29 +189,6 @@ function Home(){
         <div className="example-graph-container">
            <Graph 
             data={{
-              // nodes: [
-              //   { id: 'Philosophy', label: 'Philosophy', depth: 0 },
-              //   { id: 'Ethics', label: 'Ethics', depth: 1 },
-              //   { id: 'Logic', label: 'Logic', depth: 1 },
-              //   { id: 'Metaphysics', label: 'Metaphysics', depth: 1 },
-              //   { id: 'Epistemology', label: 'Epistemology', depth: 1 },
-              //   { id: 'Morality', label: 'Morality', depth: 2 },
-              //   { id: 'Reasoning', label: 'Reasoning', depth: 2 },
-              //   { id: 'Ontology', label: 'Ontology', depth: 2 },
-              //   { id: 'Knowledge', label: 'Knowledge', depth: 2 },
-              // ],
-              // edges: [
-              //   { source: 'Philosophy', target: 'Ethics' },
-              //   { source: 'Philosophy', target: 'Logic' },
-              //   { source: 'Philosophy', target: 'Metaphysics' },
-              //   { source: 'Philosophy', target: 'Epistemology' },
-              //   { source: 'Ethics', target: 'Morality' },
-              //   { source: 'Logic', target: 'Reasoning' },
-              //   { source: 'Metaphysics', target: 'Ontology' },
-              //   { source: 'Epistemology', target: 'Knowledge' },
-              // ]
-              
-              
               edges: [
                 { "source": "Dirk_Nowitzki", "target": "Dirk_Nowitzki"},
                 { "source": "Dirk_Nowitzki", "target": "Dallas_Mavericks" },

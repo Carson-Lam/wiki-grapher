@@ -136,10 +136,10 @@ function GraphPage() {
                 </div>
                 <div>
                     <strong>Color Legend:</strong><br/>
-                    <span style={{ color: '#ff4444' }}>●</span> Starting page <br/>
-                    <span style={{ color: '#4444ff' }}> ●</span> 1 link away  <br/>
-                    <span style={{ color: '#44ff44' }}> ●</span> 2 links away <br/>
-                    <span style={{ color: '#ffaa44' }}> ●</span> 3+ links away<br/>
+                    <span style={{ color: '#1755d3ff', fontSize:"25px"}}>●</span> Starting page <br/>
+                    <span style={{ color: '#7b8ceaff', fontSize:"25px"}}> ●</span> 1 link away  <br/>
+                    <span style={{ color: '#95a98fff', fontSize:"25px"}}> ●</span> 2 links away <br/>
+                    <span style={{ color: '#9a8f74', fontSize:"25px"}}> ●</span> 3+ links away<br/>
                 </div>
             </div>
         </div>

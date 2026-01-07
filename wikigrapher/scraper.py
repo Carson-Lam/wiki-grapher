@@ -132,6 +132,8 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
                 'depth': depth
             }
             visited.add(current_page)
+
+            
             
             if max_depth is None or depth < max_depth:
                 for link in links:
