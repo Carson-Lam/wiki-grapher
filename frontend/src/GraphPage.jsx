@@ -35,7 +35,6 @@ function GraphPage() {
                 );
                 const data = await response.json();
                 
-
                 // Catch duplicate scrape error, abort previous scrape, start scrape w fetchGraph() 
                 if (response.status === 429) {
                     if (!isCancelled) {
@@ -113,7 +112,8 @@ function GraphPage() {
                 }}
                 id="backButton"
             >
-                ← Back to Home
+                <span className="arrow">◀</span>
+                Back
             </button>
             {screenMsg && <p id="screenText">Loading graph data...</p>}
             {graphData && (
@@ -121,8 +121,34 @@ function GraphPage() {
                     <Graph data={graphData} />
                 </div>
             )}
+            <button
+                id="infoButton"
+            >
+            ?
+            </button>
+            <div id="infoContainer">
+                <h3 className="optionsTitle"> How to use: </h3>
+                <div>
+                    <strong>Click</strong> to open Wikipedia page<br/>
+                    <strong>Scroll</strong> to zoom in/out graph<br/>
+                    <strong>Drag</strong> to pan around graph<br/>
+                    <strong>Hover</strong> to highlight connections
+                </div>
+                <div>
+                    <strong>Color Legend:</strong><br/>
+                    <span style={{ color: '#ff4444' }}>●</span> Starting page <br/>
+                    <span style={{ color: '#4444ff' }}> ●</span> 1 link away  <br/>
+                    <span style={{ color: '#44ff44' }}> ●</span> 2 links away <br/>
+                    <span style={{ color: '#ffaa44' }}> ●</span> 3+ links away<br/>
+                </div>
+            </div>
         </div>
     );
 }
 
 export default GraphPage;
+/*
+    <div>
+
+    </div>
+*/

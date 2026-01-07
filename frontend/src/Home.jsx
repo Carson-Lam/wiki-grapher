@@ -111,7 +111,14 @@ function Home(){
             </div>
         </div>    
       </div>
-      <div id="scrollIndicator">▼ Scroll to explore</div>
+      <button 
+        id="scrollIndicator"
+        onClick={() => {
+        window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
+        }}
+      >
+        ▼ Scroll to explore
+      </button>
     </section>
 
     {/* How It Works Section */}
@@ -141,7 +148,9 @@ function Home(){
           >
             <div className="step-icon">3</div>
             <h3>Customize & Explore</h3>
-            <p>Adjust the depth and scope to control how far the graph extends. Interact with nodes to dive deeper.</p>
+            <p>Adjust the depth and scope to control how far the graph extends. Interact with nodes to dive deeper.  <strong>
+              Click</strong>, <strong>hover</strong>, and <strong>drag</strong> nodes around!
+            </p>
           </div>
         </div>
       </div>
@@ -153,16 +162,16 @@ function Home(){
         <h2 className="section-title">Features</h2>
         <div className="feature-cards">
           <div className="feature-card">
-            <h3><span className="feature-icon">➔</span> Adjustable Depth Control</h3>
+            <h3><span className="feature-icon">➔</span> Adjustable Depth and Page Controls</h3>
             <p>Control how many levels deep the graph explores. <span style = {{color: 'red'}}>Deeper graphs may take more time to build.</span></p>
           </div>
           <div className="feature-card">
-            <h3><span className="feature-icon">➔</span> Page Limit Customization</h3>
-            <p>Set maximum page limits to keep graphs manageable or let it run wild to discover extensive connection networks across Wikipedia.</p>
+            <h3><span className="feature-icon">➔</span> Real-time Graph controls</h3>
+            <p>Using the <strong>options</strong> menu, adjust the depth or nodes of the graph shown. <span style = {{color: 'green'}}>More options coming.</span></p>
           </div>
           <div className="feature-card">
             <h3><span className="feature-icon">➔</span> Interactive Visualization</h3>
-            <p>Pan, zoom, and interact with the graph. Click nodes to see article previews and hover nodes to see all of its connections in real-time.</p>
+            <p>Pan, zoom, and interact with the graph. <strong>Click</strong> nodes to visit the article and <strong>hover</strong> nodes to see all of its connections in real-time.</p>
           </div>
           <div className="feature-card">
             <h3><span className="feature-icon">➔</span> Clean, Fast Interface</h3>

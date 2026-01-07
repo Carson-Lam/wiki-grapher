@@ -10,6 +10,7 @@ function Graph({ data }) {
     const [graphData, setGraphData] = useState(null);
     const [highlightNodes, setHighlightNodes] = useState(new Set());
     const [highlightLinks, setHighlightLinks] = useState(new Set());
+    const [isOpen, setIsOpen] = useState(false);
     const totalAvailableNodes = data?.nodes?.length || 0;
 
     // ============================================
@@ -192,116 +193,59 @@ function Graph({ data }) {
     // ============================================ 
     return (
         <div id="graphContainer">
-            {/*
-            Control Panel
-            <div style={{ 
-                marginBottom: '20px', 
-                padding: '20px', 
-                backgroundColor: '#f8f9fa',
-                borderRadius: '8px',
-                border: '1px solid #e0e0e0'
-            }}>
-                <h3 style={{ marginTop: 0, marginBottom: '15px', color: '#333' }}>
-                    Graph Controls
-                </h3>
-                
-                <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '1fr 1fr', 
-                    gap: '20px',
-                    marginBottom: '20px' 
-                }}>
-                    {/* Node Limit Control 
-                    <div>
-                        <label style={{ 
-                            display: 'block', 
-                            marginBottom: '8px', 
-                            fontWeight: '600',
-                            color: '#555'
-                        }}>
-                            Max Nodes: {maxNodesToShow}
-                        </label>
-                        <input 
-                            type="range"
-                            min="1"
-                            max={totalAvailableNodes}
-                            step="1"
-                            value={maxNodesToShow}
-                            onChange={(e) => setMaxNodesToShow(parseInt(e.target.value))}
-                            style={{ width: '100%' }}
-                        />
-                        <div style={{ fontSize: '12px', color: '#777', marginTop: '4px' }}>
-                            Total available: {totalAvailableNodes} nodes
-                        </div>
-                    </div>
-                    
-                    {/* Depth Filter Control }
-                    <div>
-                        <label style={{ 
-                            display: 'block', 
-                            marginBottom: '8px', 
-                            fontWeight: '600',
-                            color: '#555'
-                        }}>
-                            Depth Filter
-                        </label>
-                        <select 
-                            value={filterDepth}
-                            onChange={(e) => setFilterDepth(e.target.value)}
-                            style={{ 
-                                width: '100%',
-                                padding: '8px',
-                                borderRadius: '4px',
-                                border: '1px solid #ccc',
-                                fontSize: '14px',
-                                backgroundColor: 'white'
-                            }}
-                        >
-                            <option value="all">Show All Depths</option>
-                            <option value="0">Depth 0 Only</option>
-                            <option value="1">Up to Depth 1</option>
-                            <option value="2">Up to Depth 2</option>
-                            <option value="3">Up to Depth 3</option>
-                        </select>
-                    </div>
-                </div>
-
-                {/* Instructions }
-                <div style={{ 
-                    padding: '15px', 
-                    backgroundColor: 'white',
-                    borderRadius: '4px',
-                    fontSize: '13px',
-                    lineHeight: '1.8',
-                    border: '1px solid #e8e8e8'
-                }}>
-                    <div style={{ fontWeight: '600', marginBottom: '10px', color: '#333' }}>
-                        How to use:
-                    </div>
-                    <div style={{ color: '#666' }}>
-                        <strong>Click</strong> any node to open its Wikipedia page<br/>
-                        <strong>Scroll</strong> to zoom in/out<br/>
-                        <strong>Drag</strong> to pan around<br/>
-                        <strong>Hover</strong> over nodes to highlight connections
-                    </div>
-                    <div style={{ 
-                        marginTop: '12px', 
-                        paddingTop: '12px', 
-                        borderTop: '1px solid #f0f0f0',
-                        fontSize: '12px'
-                    }}>
-                        <strong>Color Legend:</strong><br/>
-                        <span style={{ color: '#ff4444' }}>●</span> Starting page • 
-                        <span style={{ color: '#4444ff' }}> ●</span> 1 link away • 
-                        <span style={{ color: '#44ff44' }}> ●</span> 2 links away • 
-                        <span style={{ color: '#ffaa44' }}> ●</span> 3+ links away
-                    </div>
-                </div>
-            </div>
-            */}
-            
-            {/* Graph Canvas */}
             <div id="graphCanvas">
+                {/* Instructions start */}
+                <div id="dropDown">
+                    <button onClick={() => setIsOpen(!isOpen)} id="dropDownButton">
+                        Options
+                        <span className={`arrow ${isOpen ? 'open' : ''}`}>▼</span>
+                    </button>
+                    {isOpen && (
+                        <div className="optionsContainer">
+                            <h3 className="optionsTitle">
+                                Graph Controls
+                            </h3> 
+                            <div className="option">
+                                <label className="optionsText">
+                                    Max Nodes: {maxNodesToShow}
+                                </label>
+                                <input 
+                                    type="range"
+                                    min="1"
+                                    max={totalAvailableNodes}
+                                    step="1"
+                                    value={maxNodesToShow}
+                                    onChange={(e) => setMaxNodesToShow(parseInt(e.target.value))}
+                                />
+                                <div 
+                                    style={{
+                                        fontSize: "0.9rem",
+                                        color: "#54595d"
+                                    }}
+                                >
+                                    Total available: {totalAvailableNodes} nodes
+                                </div>
+                            </div>
+                            <div className="option">
+                                <label className="optionsText">
+                                    Depth Filter:
+                                </label>
+                                <select 
+                                    value={filterDepth}
+                                    onChange={(e) => setFilterDepth(e.target.value)}
+                                >
+                                    <option value="all">Show All Depths</option>
+                                    <option value="0">Depth 0 Only</option>
+                                    <option value="1">Up to Depth 1</option>
+                                    <option value="2">Up to Depth 2</option>
+                                    <option value="3">Up to Depth 3</option>
+                                </select>
+                            </div>
+                        </div> 
+                    )}
+                </div>
+                {/* Instructions end */}
+
                 {graphData && (
                     <ForceGraph2D
                         ref={graphRef}
@@ -320,3 +264,4 @@ function Graph({ data }) {
 }
 
 export default Graph;
+
