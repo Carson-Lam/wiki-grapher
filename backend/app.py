@@ -6,7 +6,16 @@ import scraper
 import requests
 
 app = Flask(__name__)
-CORS(app)
+
+# CORS For Localhost
+# CORS(app)
+
+# CORS For Deployment
+CORS(app, origins=[
+    'http://localhost:5173',  # Local dev, react url
+    'https://wikigrapher.vercel.app',  # Vercel
+    'https://*.vercel.app'  # Vercel Preview
+])
 
 @app.route('/') 
 def working():

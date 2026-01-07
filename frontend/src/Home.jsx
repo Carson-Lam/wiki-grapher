@@ -47,7 +47,7 @@ function Home(){
         console.error('Search error:', err);
         setSuggestions([]);
       }
-    }, 200);
+    }, 150);
   }
 
   // Handle suggestion click

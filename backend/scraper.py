@@ -121,8 +121,10 @@ def build_graph_bfs_streaming(start_page, max_pages=50, max_depth=None):
             
             print(f"Scraping ({len(visited)+1}/{max_pages}): {current_page} (depth {depth})")
 
+            # Prevent self-links regardless of underscore & case compared to input
             links = [link for link in 
-            scrape_page(f'https://en.wikipedia.org/wiki/{current_page}') if link.lower() != current_page.lower()]
+            scrape_page(f'https://en.wikipedia.org/wiki/{current_page}') 
+            if link.lower().replace('_', ' ') != current_page.lower().replace('_', ' ')]
             
             graph[current_page] = {
                 'links': links,
