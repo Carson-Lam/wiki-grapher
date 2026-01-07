@@ -13,7 +13,7 @@ app = Flask(__name__)
 # CORS For Deployment
 CORS(app, origins=[
     'http://localhost:5173',  # Local dev, react url
-    'https://wikigrapher.vercel.app',  # Vercel
+    'https://wiki-grapher.vercel.app',  # Vercel
     'https://*.vercel.app'  # Vercel Preview
 ])
 
