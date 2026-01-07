@@ -1,0 +1,12 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+	<style>
+		tspan { white-space:pre } 
+		.s0 { fill: #ffffff } 
+		.t1 { font-size: 66px;fill: #000000;font-weight: 400;font-family: "LinLibertineO", "Linux Libertine O" } 
+	</style>
+	<path id="Shape 1" fill-rule="evenodd" class="s0" d="m10 0h44c5.52 0 10 4.48 10 10v44c0 5.52-4.48 10-10 10h-44c-5.52 0-10-4.48-10-10v-44c0-5.52 4.48-10 10-10z"/>
+	<text id="G" style="transform: matrix(.909,0,0,.909,9.364,10.182)" >
+		<tspan x="1.6" y="46" class="t1">G
+</tspan>
+	</text>
+</svg>
