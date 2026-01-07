@@ -39,7 +39,7 @@ function Home(){
     // debouncing to prevent too many API calls
     searchTimeoutRef.current = setTimeout(async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/search?q=${encodeURIComponent(value)}`);
+        const response = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(value)}`);
         const data = await response.json();
         setSuggestions(data.suggestions || []);
         setShowSuggestions(true);

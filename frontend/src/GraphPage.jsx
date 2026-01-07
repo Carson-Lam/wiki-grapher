@@ -15,6 +15,8 @@ function GraphPage() {
 
     const toastIdRef = useRef(null);
 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     // Load graph
     useEffect(() => {
         let isCancelled = false;
@@ -25,7 +27,7 @@ function GraphPage() {
             toastIdRef.current = toast.loading('Building graph...');
             
             eventSourceRef = new EventSource(
-                `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=${Number(maxPages) || 1}`
+                `${API_URL}/api/scrape?page=${page}&depth=${depth}&max_pages=${Number(maxPages) || 1}`
             );
             
             let accumulatedNodes = [];
@@ -54,7 +56,7 @@ function GraphPage() {
                         toast.success('Restarting graph...');
                         
                         // Stop the previous scrape and retry
-                        fetch('http://localhost:5000/api/scrape/stop', {method: 'GET'})
+                        fetch('${API_URL}/api/scrape/stop', {method: 'GET'})
                         .then(() => new Promise(resolve => setTimeout(resolve, 2000)))
                         .then(() => {
                             if (!isCancelled) {
@@ -110,7 +112,7 @@ function GraphPage() {
             if (toastIdRef.current) {
                 toast.dismiss(toastIdRef.current);
             }
-            fetch('http://localhost:5000/api/scrape/stop', {method: 'GET'});
+            fetch('${API_URL}/api/scrape/stop', {method: 'GET'});
         };
     }, [page, depth, maxPages]);
 
@@ -133,7 +135,7 @@ function GraphPage() {
             {/* Back button */}
             <button 
                 onClick={async () => { 
-                    fetch('http://localhost:5000/api/scrape/stop', {method: 'GET'});
+                    fetch('${API_URL}/api/scrape/stop', {method: 'GET'});
                     navigate('/');
                 }}
                 id="backButton"

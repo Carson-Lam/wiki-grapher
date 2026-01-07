@@ -101,6 +101,7 @@ def stopScrape():
     return jsonify({'status': 'stopping'})
 
 if __name__ == '__main__':
-    print("Starting Flask server on http://localhost:5000")
-    print("Try: http://localhost:5000/api/scrape?page=Fergana_(moth)&depth=2")
+    # Dev prints
+    # print("Starting Flask server on http://localhost:5000")
+    # print("Try: http://localhost:5000/api/scrape?page=Fergana_(moth)&depth=2")
     app.run(debug=True, port=5000)
