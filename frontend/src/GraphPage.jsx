@@ -8,7 +8,6 @@ function GraphPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [graphData, setGraphData] = useState(null);
-    const [screenMsg, setScreenMsg] = useState(null);
 
     const page = searchParams.get('page');
     const depth = searchParams.get('depth');
@@ -18,73 +17,100 @@ function GraphPage() {
 
     // Load graph
     useEffect(() => {
-        // Unmount/back button cancellation
         let isCancelled = false;
+        let eventSourceRef = null;  
+        
         const fetchGraph = async () => {
-
-            setScreenMsg(true);
-            
+            // setScreenMsg(true);
             toastIdRef.current = toast.loading('Building graph...');
-
-            try {
-                // Unmount/back button cancellation
-                if (isCancelled) return; 
-
-                const response = await fetch(
-                    `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=${Number(maxPages) || 1}`
-                );
-                const data = await response.json();
-                
-                // Catch duplicate scrape error, abort previous scrape, start scrape w fetchGraph() 
-                if (response.status === 429) {
-                    if (!isCancelled) {
-                        toast.dismiss(toastIdRef.current);  
-                        toast.success('Restarted graphing');
-                    }
-
-                    await fetch('http://localhost:5000/api/scrape/stop', {method: 'GET'})
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-
-                    if (!isCancelled) {
-                        fetchGraph();
-                    } 
+            
+            eventSourceRef = new EventSource(
+                `http://localhost:5000/api/scrape?page=${page}&depth=${depth}&max_pages=${Number(maxPages) || 1}`
+            );
+            
+            let accumulatedNodes = [];
+            let accumulatedEdges = [];
+            
+            eventSourceRef.onmessage = (event) => {
+                if (isCancelled) {
+                    eventSourceRef.close();
                     return;
-                } 
-
-                if (!response.ok){
-                    throw new Error('failed to fetch');
                 }
-
-                if (data.error){
-                    throw new Error(data.error);
+                
+                const data = JSON.parse(event.data);
+                
+                if (data.error) {
+                    eventSourceRef.close();
+                    toast.dismiss(toastIdRef.current);
+                    toast.error(data.error);
+                    return;
                 }
-
-                console.log('Got data:', data);
-                setGraphData(data);
-                setScreenMsg(false);
-                toast.dismiss(toastIdRef.current);  
-                toast.success('Graph completed!')
-
-            } catch (err) {
-                if (isCancelled) return;
-
-                toast.dismiss(toastIdRef.current);  
-                toast.error('Failed to fetch graph data: ', err);
-                setScreenMsg('Error:', err);
-                console.error('Error:', err);
-            }
+                
+                // Handle duplicate scrape
+                if (data.type === 'busy') {
+                    eventSourceRef.close();
+                    if (!isCancelled) {
+                        toast.dismiss(toastIdRef.current);
+                        toast.success('Restarting graph...');
+                        
+                        // Stop the previous scrape and retry
+                        fetch('http://localhost:5000/api/scrape/stop', {method: 'GET'})
+                        .then(() => new Promise(resolve => setTimeout(resolve, 2000)))
+                        .then(() => {
+                            if (!isCancelled) {
+                                fetchGraph(); 
+                            }
+                        });
+                    }
+                    return;
+                }
+                
+                if (data.type === 'node') {
+                    // Add new node and edges
+                    accumulatedNodes.push(data.node);
+                    accumulatedEdges.push(...data.edges);
+                    
+                    // Update graph in real-time
+                    setGraphData({
+                        nodes: [...accumulatedNodes],
+                        edges: [...accumulatedEdges]
+                    });
+                    
+                    // Update toast with progress
+                    toast.loading(`Building graph... ${data.progress}/${data.total} nodes`, {
+                        id: toastIdRef.current
+                    });
+                } else if (data.type === 'complete') {
+                    eventSourceRef.close();
+                    toast.dismiss(toastIdRef.current);
+                    toast.success('Graph completed!');
+                }
+            };
+            
+            eventSourceRef.onerror = (error) => {
+                console.log('EventSource error:', error);
+                eventSourceRef.close();
+                if (!isCancelled) {
+                    toast.dismiss(toastIdRef.current);
+                    toast.error('Connection lost');
+                }
+            };
         };
+        
         if (page) {
             fetchGraph();
         }
         
-        // Cleanup toasts on unmount/backbutton cancellation
+        // Cleanup on unmount/back button
         return () => {
             isCancelled = true;
+            if (eventSourceRef) {
+                eventSourceRef.close();
+            }
             if (toastIdRef.current) {
                 toast.dismiss(toastIdRef.current);
             }
-            fetch('http://localhost:5000/api/scrape/stop', {method: 'GET'})
+            fetch('http://localhost:5000/api/scrape/stop', {method: 'GET'});
         };
     }, [page, depth, maxPages]);
 
@@ -115,7 +141,7 @@ function GraphPage() {
                 <span className="arrow">◀</span>
                 Back
             </button>
-            {screenMsg && <p id="screenText">Loading graph data...</p>}
+            {/* {screenMsg && <p id="screenText">Loading graph data...</p>} */}
             {graphData && (
                 <div>
                     <Graph data={graphData} />
@@ -147,8 +173,3 @@ function GraphPage() {
 }
 
 export default GraphPage;
-/*
-    <div>
-
-    </div>
-*/

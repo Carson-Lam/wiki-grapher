@@ -5,7 +5,7 @@ import './App.css';
 
 function Graph({ data }) {
     const graphRef = useRef();
-    const [maxNodesToShow, setMaxNodesToShow] = useState(300);
+    const [maxNodesToShow, setMaxNodesToShow] = useState(9999); // Set max state so slider doesn't limit
     const [filterDepth, setFilterDepth] = useState('all');
     const [graphData, setGraphData] = useState(null);
     const [highlightNodes, setHighlightNodes] = useState(new Set());
@@ -20,9 +20,6 @@ function Graph({ data }) {
     // It transforms raw Wikipedia data into graph format
     useEffect(() => {
         if (!data) return;
-
-        setMaxNodesToShow(Math.min(maxNodesToShow, totalAvailableNodes));
-
         // Color nodes by their depth (distance from starting page)
         const getNodeColor = (depth) => {
             const colors = {
@@ -46,13 +43,24 @@ function Graph({ data }) {
         const nodeIds = new Set(nodesToDisplay.map(n => n.id));
 
         // Transform nodes: add display properties
-        const nodes = nodesToDisplay.map(node => ({
-            id: node.id,
-            name: node.label.replace(/_/g, ' '),
-            depth: node.depth,
-            color: getNodeColor(node.depth),
-            val: 70 - (node.depth * 20), // Center node is bigger
-        }));
+        const nodes = nodesToDisplay.map(node => {
+
+            // URL Encoding, decode UTF special character in URL
+            let label = node.label;
+            try {
+                node.label = decodeURIComponent(node.label)
+            } catch (e) { 
+                // Fallback to original URL component 
+            }
+
+            return {
+                id: node.id,
+                name: node.label.replace(/_/g, ' '),
+                depth: node.depth,
+                color: getNodeColor(node.depth),
+                val: 70 - (node.depth * 17), // Center node is bigger
+            };
+        });
 
         // Transform links: only include links between visible nodes
         const links = data.edges
@@ -79,6 +87,11 @@ function Graph({ data }) {
             }
         }, 100);
     }, [data, maxNodesToShow, filterDepth]);
+
+    // Update options slider as nodes get added 
+    useEffect(() => {
+        setMaxNodesToShow(totalAvailableNodes);
+    }, [totalAvailableNodes]);
 
     // ============================================
     // SECTION 2: INTERACTION HANDLERS

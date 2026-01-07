@@ -1,84 +1,93 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
-from scraper import build_graph_bfs, stop_scraping
-
+import json
+from scraper import build_graph_bfs_streaming, scrape_lock
+import scraper
+import requests
 
 app = Flask(__name__)
-CORS(app) # React <--> flask communication
+CORS(app)
 
 @app.route('/') 
 def working():
     return 'hello'
 
+# Main scraping API endpoint
 @app.route('/api/scrape', methods=['GET'])
 def scrape():
     """
-    API endpoint to scrape Wikipedia and return graph data.
-    
-    Query params:
-        page: Wikipedia page name (e.g., 'Fergana_(moth)')
-        depth: How many levels deep to scrape (default: 2)
-        max_pages: Max total pages (default: 100)
+    API endpoint to scrape Wikipedia and stream graph data in real-time.
     """
-
-    # Get parameters
+    # Get Url params
     page = request.args.get('page')
     depth = int(request.args.get('depth', 2))
-    max_pages = int(request.args.get('max_pages', 50)) 
-
-    # Validate
+    max_pages = int(request.args.get('max_pages', 50))
+    
+    # Validate before creating generator
     if not page:
         return jsonify({'error': 'Missing page parameter'}), 400
+
+    # Check if another scrape is in progress
+    if scrape_lock.locked():
+        def busy_response():
+            yield f"data: {json.dumps({'type': 'busy', 'message': 'Another scrape is in progress'})}\n\n"
+        return Response(busy_response(), mimetype='text/event-stream')
+
+    # Generator function that takes built bfs node and yields it   
+    def generate():
+        try:
+            for node_data in build_graph_bfs_streaming(page, max_pages=max_pages, max_depth=depth):
+                yield f"data: {json.dumps(node_data)}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
     
+    return Response(generate(), mimetype='text/event-stream')
+
+# Search Suggestions API endpoint
+@app.route('/api/search', methods=['GET'])
+def search_suggestions():
+    """
+    API endpoint to get wikipedia page suggestions for autocomplete.
+    """
+    query = request.args.get('q', '')
+
+    if not query or len(query) < 2:
+        return jsonify({'suggestions': []})
     try:
-        # Call scraper.py scraping function
-        graph = build_graph_bfs(page, max_pages=max_pages, max_depth=depth)
+        url = 'https://en.wikipedia.org/w/api.php'
+        params = {
+            'action': 'opensearch',
+            'search': query,
+            'limit': 8,  # Number of suggestions
+            'namespace': 0,  # Main articles
+            'format': 'json'
+        }
 
-        if graph is None:
-            return jsonify({'error': 'Another scrape is already in progress. Please wait.'}), 429
+        headers = {
+            'User-Agent': 'WikigrapheR/1.0 (Educational Project)'
+        }
 
-        nodes_dict = {}
-        edges = []
+        response = requests.get(url, params = params, headers=headers, timeout = 10)
+        data = response.json()
 
-        # Add scraped nodes
-        for page_name, data in graph.items():
-            nodes_dict[page_name]= {
-                'id': page_name,
-                'label': page_name,
-                'depth': data['depth']
+        # OpenSearch returns: [query, [titles], [descriptions], [urls]]
+        # Take i-th element of 1, 2 and 3 
+        suggestions = [
+            {
+                'title': data[1][i],
+                # 'description': data[2][i] if i < len(data[2]) else '',
+                # 'url': data[3][i] if i < len(data[3]) else ''
             }
-        
-        # Add edges and target nodes (children of scraped)
-        for page_name, data in graph.items():
-            for target in data['links']:
-                # Only add edge if target is within depth
-                if target in nodes_dict: 
-                    edges.append({
-                        'source': page_name,
-                        'target': target
-                    })
-        nodes = list(nodes_dict.values())
-
-        return jsonify({
-            'nodes': nodes,
-            'edges': edges,
-            'stats':{
-                'total_nodes': len(nodes),
-                'total_edges': len(edges)
-            }
-        })
+            for i in range(len(data[1]))
+        ]
+        return jsonify({'suggestions': suggestions})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"search error: {e}")
+        return jsonify({'suggestions': []})    
 
-@app.route('/api/health', methods=['GET'])
-def health():
-    return jsonify({
-        'status': 'ok'
-    })
-
+# Stop scraping API endpoint, changes flag in scraper.py that stops scraping for loop
 @app.route('/api/scrape/stop', methods=['GET'])
 def stopScrape():
-    import scraper
     scraper.stop_scraping = True
     return jsonify({'status': 'stopping'})
 
@@ -86,4 +95,3 @@ if __name__ == '__main__':
     print("Starting Flask server on http://localhost:5000")
     print("Try: http://localhost:5000/api/scrape?page=Fergana_(moth)&depth=2")
     app.run(debug=True, port=5000)
-

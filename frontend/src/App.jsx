@@ -8,7 +8,13 @@ import { Toaster } from 'react-hot-toast';
 function App() {
   return (
     <>
-    <Toaster />
+    <Toaster 
+      toastOptions = {{
+        style: { 
+          fontSize: "1.1rem"
+        }
+      }}
+    />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />

@@ -18,7 +18,7 @@ def scrape_page(url):
     """
 
     headers = {
-        'User-Agent': 'WikiGrapher/1.0 (Educational Project; lamcn51@example.com)'
+        'User-Agent': 'WikiGrapher/1.0 (Portfolio Project; lamcn51@example.com)'
     }
 
     try:
@@ -77,24 +77,18 @@ def scrape_page(url):
     
     return links 
 
-
-def build_graph_bfs(start_page, max_pages=50, max_depth=None):
+def build_graph_bfs_streaming(start_page, max_pages=50, max_depth=None):
     """
-    Build a graph using BFS.
+    Build a graph using BFS, yielding nodes as they're scraped
     
     Args:
         start_page: Starting Wikipedia page name (e.g., 'Fergana_(moth)')
         max_pages: Maximum number of pages to scrape
         max_depth: Maximum depth to explore (None = no limit)
     
-    Returns:
-        dict: Adjacency list with depth info
-        {
-            "Fergana_(moth)": {"links": ["Animal", "Insect"], "depth": 0},
-            "Animal": {"links": [...], "depth": 1},
-            ...
-        }
+    Returns: YIELD block w type, node_dict, edges, progress, depth
     """
+    # Stop scraping flag, manipulated by app.py stop path
     global stop_scraping
     stop_scraping = False
 
@@ -106,6 +100,8 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
         graph = {}
         visited = set()
         queue = [(start_page, 0)]
+        nodes_dict = {}
+        all_edges = []
         
         print(f"Starting BFS from {start_page}")
         
@@ -125,7 +121,8 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
             
             print(f"Scraping ({len(visited)+1}/{max_pages}): {current_page} (depth {depth})")
 
-            links = scrape_page(f'https://en.wikipedia.org/wiki/{current_page}')
+            links = [link for link in 
+            scrape_page(f'https://en.wikipedia.org/wiki/{current_page}') if link.lower() != current_page.lower()]
             
             graph[current_page] = {
                 'links': links,
@@ -133,8 +130,40 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
             }
             visited.add(current_page)
 
+            # Create node
+            nodes_dict[current_page] = {
+                'id': current_page,
+                'label': current_page,
+                'depth': depth
+            }
+
+            # Create edges for this node 
+            new_edges = []
+
+            # Forward edges: current -> targets (that exist in nodes_dict)
+            for target in links:
+                edge = {'source': current_page, 'target': target}
+                new_edges.append(edge)
+                all_edges.append(edge)
+
+            # Backward edges: existing nodes -> current (if current was in their links)
+            for existing_page in nodes_dict.keys():
+                existing_links = graph.get(existing_page, {}).get('links', [])
+                if current_page in existing_links:
+                    edge = {'source': existing_page, 'target': current_page}
+                    new_edges.append(edge)
+                    all_edges.append(edge)
+
+            # Use YIELD to return nodes, edges, and keep going
+            yield {
+                'type': 'node',
+                'node': nodes_dict[current_page],
+                'edges': new_edges,
+                'progress': len(visited),
+                'total': max_pages
+            }
             
-            
+            # Only enqueue links for scraping if they are at depth
             if max_depth is None or depth < max_depth:
                 for link in links:
                     if link not in visited and not any(l[0] == link for l in queue):
@@ -142,66 +171,15 @@ def build_graph_bfs(start_page, max_pages=50, max_depth=None):
             else:
                 print(f"  Reached max depth {max_depth}, not adding children to queue")
         
+        # Completion signal
         print(f"Finished! Scraped {len(visited)} pages")
-        return graph
+        yield {
+            'type': 'complete',
+            'stats': {
+                'total_nodes': len(visited),
+                'total_edges': sum(len(data['links']) for data in graph.values())
+            }
+        }
     finally:
         scrape_lock.release()
         print("Scrape lock released")
-
-# UNUSED: DEBUG 
-# if __name__ == '__main__':
-#     # Test BFS
-#     graph = build_graph_bfs('Fergana_(moth)', max_pages=20, max_depth=2)
-    
-#     print("\nGraph structure:")
-#     for page, data in list(graph.items())[:]:
-#         print(f"{page} (depth {data['depth']}): {len(data['links'])} links")
-    
-#     print(graph)
-
-# UNUSED: Building one-level of interconnected scraped pages
-# def build_graph_one_level(start_page):
-#     """
-#     Build graph with only one level (start page + its direct children).
-#     Only shows connections between children.
-    
-#     Args:
-#         start_page: Starting Wikipedia page name
-    
-#     Returns:
-#         dict: Adjacency list with depth info
-#         {
-#             "Fergana_(moth)": {"links": ["Animal", "Insect"], "depth": 0},
-#             "Animal": {"links": [...], "depth": 1},
-#             ...
-#         }
-#     """
-#     graph = {}
-    
-#     print(f"Scraping main page: {start_page}")
-    
-#     # Scrape starting page
-#     start_url = f'https://en.wikipedia.org/wiki/{start_page}'
-#     child_links = scrape_page(start_url)
-    
-#     graph[start_page] = {
-#         'links': child_links,
-#         'depth': 0
-#     }
-    
-#     # Scrape each child, but only keep links to other children
-#     for child in child_links:
-#         print(f"Scraping child: {child}")
-#         child_url = f'https://en.wikipedia.org/wiki/{child}'
-#         all_links = scrape_page(child_url)
-        
-#         # Filter: only keep links that are also children of start_page
-#         filtered_links = [link for link in all_links if link in child_links]
-        
-#         graph[child] = {
-#             'links': filtered_links,
-#             'depth': 1
-#         }
-    
-#     print(f"Finished! Main page + {len(child_links)} children")
-#     return graph
