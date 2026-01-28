@@ -112,7 +112,7 @@ function GraphPage() {
             if (toastIdRef.current) {
                 toast.dismiss(toastIdRef.current);
             }
-            fetch('${API_URL}/api/scrape/stop', {method: 'GET'});
+            fetch(`${API_URL}/api/scrape/stop`, {method: 'GET'});
         };
     }, [page, depth, maxPages]);
 
